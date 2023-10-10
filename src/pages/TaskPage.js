@@ -14,6 +14,7 @@ import {
   Checkbox,
   TableRow,
   MenuItem,
+  Link,
   TableBody,
   TableCell,
   Container,
@@ -277,7 +278,9 @@ export default function TaskPage() {
       >
         <MenuItem>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
+          <Link  to="/">
+            Edit
+          </Link>
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>
