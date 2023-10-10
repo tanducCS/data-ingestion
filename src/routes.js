@@ -9,6 +9,8 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import TaskPage from './pages/TaskPage';
+import TaskShowPage from './pages/TaskShowPage';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +25,13 @@ export default function Router() {
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
+        {
+          path: 'task',
+          element: <TaskPage />,
+          children: [
+            { path: 'show', element: <TaskShowPage /> }, 
+          ],
+        },
       ],
     },
     {
