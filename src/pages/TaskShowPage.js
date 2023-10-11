@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+
 // @mui
 import {
   Card,
@@ -18,16 +19,26 @@ import {
   TableCell,
   Container,
   Typography,
+  Link,
   IconButton,
   TableContainer,
   TablePagination,
+  CardHeader,
+  useTheme,
+  Divider,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import CloseIcon from '@mui/icons-material/Close';
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { TaskListHead, TaskListToolbar } from '../sections/@dashboard/task';
 // mock
 import TASKLIST from '../_mock/task';
 
@@ -74,6 +85,10 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function TaskShowPage() {
+  const theme = useTheme();
+
+  const [openTask, setOpenTask] = useState(false);
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -140,6 +155,14 @@ export default function TaskShowPage() {
     setFilterName(event.target.value);
   };
 
+  const handleDeleteTask = () => {
+    setOpenTask(true);
+  };
+  const handleCloseDeleteTask = () => {
+    setOpenTask(false);
+  };
+
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - TASKLIST.length) : 0;
 
   const filteredUsers = applySortFilter(TASKLIST, getComparator(order, orderBy), filterName);
@@ -149,7 +172,7 @@ export default function TaskShowPage() {
   return (
     <>
       <Helmet>
-        <title> Manage Tasks </title>
+        <title> Task Detail </title>
       </Helmet>
 
       <Container>
@@ -159,103 +182,191 @@ export default function TaskShowPage() {
           </Typography>
         </Stack>
 
-        <Card>
-          <TaskListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+        <Card sx={{
+          padding: '2em'
+        }}
+        >
+            <Grid container spacing={1} justifyContent="space-around"  sx={{ marginBottom: '100px' }}>
+              <Grid container item xs>
+                <Typography variant="h4" >
+                  Thông tin tác vụ
+                </Typography>
+              </Grid>
+              <Grid container item xs justifyContent="space-between" >
+                <Grid item  >
+                  <Button variant="outlined" color="success">Quay lại</Button>
+                </Grid>
+                <Grid >
+                  <Button variant="contained" item  color="success" sx={{color: 'white'}}>Đánh dấu đã xử ly</Button>
+                </Grid>
+                <Grid item >
+                  <Button  variant="contained" color="error" onClick={handleDeleteTask}>Xóa tác vụ</Button>
 
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <TaskListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={TASKLIST.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, type, avatarUrl, time } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                  {/* Dialog to alert when to delete */}
+                  <Dialog
+                    fullWidth='true'
+                    maxWidth='sm'
+                    open={openTask}
+                    onClose={handleCloseDeleteTask}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                  >
+                    <DialogTitle id="alert-dialog-title">
+                      {"Xác nhận"}
+                    </DialogTitle>
+                    <IconButton
+                      aria-label="close"
+                      onClick={handleCloseDeleteTask}
+                      sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                      }}
+                    >
+                      <CloseIcon/>
+                    </IconButton>
+                    <Divider />
+                    <DialogContent >
+                      <DialogContentText id="alert-dialog-description">
+                        Bạn muốn xóa tác vụ này?
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button variant='outlined' onClick={handleCloseDeleteTask} color='success'>HỦY</Button>
+                      <Button variant='contained' onClick={handleCloseDeleteTask} autoFocus color="error">
+                        XÓA
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </Grid>
+              </Grid>
+            </Grid>
 
-                    return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
+            <Grid container spacing={6}>
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Tên người yêu cầu:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    John Due
+                  </Typography>
+                </Grid>
+              </Grid>
 
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Loại yêu cầu:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    Đăng ký
+                  </Typography>
+                </Grid>
+              </Grid>
+              
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Tổ chức:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    HPC Lab
+                  </Typography>
+                </Grid>
+              </Grid>
 
-                        <TableCell align="left">{type}</TableCell>
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Trạng thái:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    Đã xử lý
+                  </Typography>
+                </Grid>
+              </Grid>
 
-                        <TableCell align="left">{time}</TableCell>
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Email:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    duc.hotancs@hcmut.edu.vn
+                  </Typography>
+                </Grid>
+              </Grid>
 
-                        <TableCell align="left">{role}</TableCell>
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Người xét duyệt:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    Administrator
+                  </Typography>
+                </Grid>
+              </Grid>
 
-                        <TableCell align="left">
-                          <Label color={(status === 'Not Handled' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Dữ liệu:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    ....
+                  </Typography>
+                </Grid>
+              </Grid>
 
-                {isNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
-                          }}
-                        >
-                          <Typography variant="h6" paragraph>
-                            Not found
-                          </Typography>
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Ngày khởi tạo:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    ....
+                  </Typography>
+                </Grid>
+              </Grid>
 
-                          <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
-                          </Typography>
-                        </Paper>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={TASKLIST.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Ghi chú:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    Không có
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
         </Card>
       </Container>
+
+      
+
+
 
       <Popover
         open={Boolean(open)}
@@ -277,7 +388,7 @@ export default function TaskShowPage() {
       >
         <MenuItem>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
+          
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>

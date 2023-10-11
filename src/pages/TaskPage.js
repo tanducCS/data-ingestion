@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+import { NavLink as RouterLink } from 'react-router-dom';
 // @mui
 import {
   Card,
@@ -14,6 +15,7 @@ import {
   Checkbox,
   TableRow,
   MenuItem,
+  Link,
   TableBody,
   TableCell,
   Container,
@@ -21,7 +23,14 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Divider,
 } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import CloseIcon from '@mui/icons-material/Close';
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
@@ -74,6 +83,8 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function TaskPage() {
+  const [openTask, setOpenTask] = useState(false);
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -96,6 +107,8 @@ export default function TaskPage() {
     setOpen(null);
   };
 
+
+  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -138,6 +151,13 @@ export default function TaskPage() {
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
+  };
+
+  const handleDeleteTask = () => {
+    setOpenTask(true);
+  };
+  const handleCloseDeleteTask = () => {
+    setOpenTask(false);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - TASKLIST.length) : 0;
@@ -276,15 +296,57 @@ export default function TaskPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2}} />
+          <Link component={RouterLink} to="/dashboard/task/show" underline="none" color="inherit">
           Edit
+          </Link>
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        <MenuItem sx={{ color: 'error.main' }} onClick={handleDeleteTask}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
+
+          
+
         </MenuItem>
       </Popover>
+      {/* Dialog to alert when to delete */}
+      <Dialog
+            fullWidth='true'
+            maxWidth='sm'
+            open={openTask}
+            onClose={handleCloseDeleteTask}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Xác nhận"}
+            </DialogTitle>
+            <IconButton
+              aria-label="close"
+              onClick={handleCloseDeleteTask}
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+                color: (theme) => theme.palette.grey[500],
+              }}
+            >
+              <CloseIcon/>
+            </IconButton>
+            <Divider />
+            <DialogContent >
+              <DialogContentText id="alert-dialog-description">
+                Bạn muốn xóa tác vụ này?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button variant='outlined' onClick={handleCloseDeleteTask} color='success'>HỦY</Button>
+              <Button variant='contained' onClick={handleCloseDeleteTask} autoFocus color="error">
+                XÓA
+              </Button>
+            </DialogActions>
+          </Dialog>
     </>
   );
 }

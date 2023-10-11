@@ -23,7 +23,7 @@ const navConfig = [
   },
   {
     title: 'Quản lý tác vụ',
-    path: '/dashboard/task',
+    path: '/dashboard/task/index',
     icon: icon('ic_task'),
   },
   // {

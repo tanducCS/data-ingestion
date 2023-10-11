@@ -27,8 +27,8 @@ export default function Router() {
         { path: 'blog', element: <BlogPage /> },
         {
           path: 'task',
-          element: <TaskPage />,
           children: [
+            { path: 'index', element: <TaskPage /> }, 
             { path: 'show', element: <TaskShowPage /> }, 
           ],
         },
