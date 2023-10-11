@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+
 // @mui
 import {
   Card,
@@ -22,7 +23,17 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  CardHeader,
+  useTheme,
+  Divider,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import CloseIcon from '@mui/icons-material/Close';
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
@@ -74,6 +85,10 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function TaskShowPage() {
+  const theme = useTheme();
+
+  const [openTask, setOpenTask] = useState(false);
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -140,6 +155,14 @@ export default function TaskShowPage() {
     setFilterName(event.target.value);
   };
 
+  const handleDeleteTask = () => {
+    setOpenTask(true);
+  };
+  const handleCloseDeleteTask = () => {
+    setOpenTask(false);
+  };
+
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - TASKLIST.length) : 0;
 
   const filteredUsers = applySortFilter(TASKLIST, getComparator(order, orderBy), filterName);
@@ -159,11 +182,191 @@ export default function TaskShowPage() {
           </Typography>
         </Stack>
 
-        <Card>
-          abc 
+        <Card sx={{
+          padding: '2em'
+        }}
+        >
+            <Grid container spacing={1} justifyContent="space-around"  sx={{ marginBottom: '100px' }}>
+              <Grid container item xs>
+                <Typography variant="h4" >
+                  Thông tin tác vụ
+                </Typography>
+              </Grid>
+              <Grid container item xs justifyContent="space-between" >
+                <Grid item  >
+                  <Button variant="outlined" color="success">Quay lại</Button>
+                </Grid>
+                <Grid >
+                  <Button variant="contained" item  color="success" sx={{color: 'white'}}>Đánh dấu đã xử ly</Button>
+                </Grid>
+                <Grid item >
+                  <Button  variant="contained" color="error" onClick={handleDeleteTask}>Xóa tác vụ</Button>
 
+                  {/* Dialog to alert when to delete */}
+                  <Dialog
+                    fullWidth='true'
+                    maxWidth='sm'
+                    open={openTask}
+                    onClose={handleCloseDeleteTask}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                  >
+                    <DialogTitle id="alert-dialog-title">
+                      {"Xác nhận"}
+                    </DialogTitle>
+                    <IconButton
+                      aria-label="close"
+                      onClick={handleCloseDeleteTask}
+                      sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                      }}
+                    >
+                      <CloseIcon/>
+                    </IconButton>
+                    <Divider />
+                    <DialogContent >
+                      <DialogContentText id="alert-dialog-description">
+                        Bạn muốn xóa tác vụ này?
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button variant='outlined' onClick={handleCloseDeleteTask} color='success'>HỦY</Button>
+                      <Button variant='contained' onClick={handleCloseDeleteTask} autoFocus color="error">
+                        XÓA
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={6}>
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Tên người yêu cầu:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    John Due
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Loại yêu cầu:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    Đăng ký
+                  </Typography>
+                </Grid>
+              </Grid>
+              
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Tổ chức:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    HPC Lab
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Trạng thái:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    Đã xử lý
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Email:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    duc.hotancs@hcmut.edu.vn
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Người xét duyệt:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    Administrator
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Dữ liệu:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    ....
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Ngày khởi tạo:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    ....
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={6}>
+                <Grid item xs={4}>
+                  <Typography variant="h6" >
+                    Ghi chú:
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h8" xs={{innerHeight: '100%'}} >
+                    Không có
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
         </Card>
       </Container>
+
+      
+
+
 
       <Popover
         open={Boolean(open)}

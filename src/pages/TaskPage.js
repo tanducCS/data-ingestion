@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+import { NavLink as RouterLink } from 'react-router-dom';
 // @mui
 import {
   Card,
@@ -277,9 +278,9 @@ export default function TaskPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          <Link  to="/">
-            Edit
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2}} />
+          <Link component={RouterLink} to="/dashboard/task/show" underline="none" color="inherit">
+          Edit
           </Link>
         </MenuItem>
 
