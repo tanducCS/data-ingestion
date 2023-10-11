@@ -11,6 +11,7 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import TaskPage from './pages/TaskPage';
 import TaskShowPage from './pages/TaskShowPage';
+import UserManage from './pages/UserManage';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +23,13 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage /> },
+        { path: 'user',
+          element: <UserPage /> ,
+          children: [
+            { path: 'usr', element: <UserManage /> },
+          ],
+        },
+        { path: 'usr', element: <UserManage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         {

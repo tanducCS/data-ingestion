@@ -16,6 +16,7 @@ import {
   AppWidgetSummary,
   AppCurrentSubject,
   AppConversionRates,
+  AppFormInput,
 } from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
@@ -173,7 +174,7 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppTrafficBySite
+            {/* <AppTrafficBySite
               title="Traffic by Site"
               list={[
                 {
@@ -197,7 +198,8 @@ export default function DashboardAppPage() {
                   icon: <Iconify icon={'eva:twitter-fill'} color="#1C9CEA" width={32} />,
                 },
               ]}
-            />
+            /> */}
+            <AppFormInput/>
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
