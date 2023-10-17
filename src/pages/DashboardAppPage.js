@@ -3,8 +3,11 @@ import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
+import { Air, Opacity, Thermostat, Tv, WbIncandescent } from "@mui/icons-material";
 // components
 import Iconify from '../components/iconify';
+import StatBox from '../components/StatBox/StatBox';
+
 // sections
 import {
   AppTasks,
@@ -174,6 +177,19 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
+            
+            <StatBox title="Light 2"
+            subtitle="Active for 3 hours"
+            progress="50"
+            increase="5Kwh"
+            icon={
+              <WbIncandescent
+                 sx={{ color: 'blue', fontSize: "26px" }}
+              />
+            }
+            />
+          </Grid>
+          <Grid item xs={12} md={6} lg={4}>
             {/* <AppTrafficBySite
               title="Traffic by Site"
               list={[
@@ -201,7 +217,6 @@ export default function DashboardAppPage() {
             /> */}
             <AppFormInput/>
           </Grid>
-
           <Grid item xs={12} md={6} lg={8}>
             <AppTasks
               title="Tasks"

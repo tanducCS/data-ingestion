@@ -21,7 +21,7 @@ import {
 
 // ----------------------------------------------------------------------
 
-export default function DashboardAppPage() {
+export default function UseManage() {
   const theme = useTheme();
 
   return (

@@ -93,6 +93,8 @@ import Checkbox from '@mui/material/Checkbox';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
+import Button from '@mui/material/Button';
+import {Box} from '@mui/material';
 
 export default function PaymentForm() {
   return (
@@ -157,6 +159,10 @@ export default function PaymentForm() {
             control={<Checkbox color="secondary" name="saveCard" value="yes" />}
             label="Remember credit card details for next time"
           />
+        </Grid>
+        <Grid container justifyContent="center"  item xs={12} sx={{ alignItems: 'center' }}>
+          <Button type='submit'>Huỷ</Button>
+          <Button type='submit'>Tạo mới</Button>
         </Grid>
       </Grid>
       </CardContent>

@@ -12,7 +12,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import TaskPage from './pages/TaskPage';
 import TaskShowPage from './pages/TaskShowPage';
 import UserManage from './pages/UserManage';
-
+import SensorManage from './pages/SensorManage';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -30,6 +30,7 @@ export default function Router() {
           ],
         },
         { path: 'usr', element: <UserManage /> },
+        { path: 'sensor', element: <SensorManage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         {
