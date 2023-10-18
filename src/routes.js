@@ -11,18 +11,26 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import TaskPage from './pages/TaskPage';
 import TaskShowPage from './pages/TaskShowPage';
+import UserShowPage from './pages/UserShowPage';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const token = localStorage.getItem('token');
   const routes = useRoutes([
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: token ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/dashboard/app" /> , index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage /> },
+        { 
+          path: 'user', 
+          children: [
+            {path: 'index', element: <UserPage/>},
+            {path: 'show', element: <UserShowPage/>},
+          ]
+        },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         {
