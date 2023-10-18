@@ -38,7 +38,7 @@ export default function SensorManage() {
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <StatBox title="Light 2"
+            <StatBox title="Light: 29"
             subtitle="Active for 3 hours"
             progress="50"
             increase="5Kwh"
@@ -51,7 +51,7 @@ export default function SensorManage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <StatBox title="Light 2"
+            <StatBox title="Light: 28"
             subtitle="Active for 3 hours"
             progress="50"
             increase="5Kwh"
@@ -64,7 +64,7 @@ export default function SensorManage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <StatBox title="Light 2"
+            <StatBox title="Light: 29"
             subtitle="Active for 3 hours"
             progress="50"
             increase="5Kwh"
@@ -77,7 +77,7 @@ export default function SensorManage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <StatBox title="Light 2"
+            <StatBox title="Light: 28"
             subtitle="Active for 3 hours"
             progress="50"
             increase="5Kwh"
@@ -89,7 +89,7 @@ export default function SensorManage() {
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <StatBox title="Light 2"
+            <StatBox title="Light: 29"
             subtitle="Active for 3 hours"
             progress="50"
             increase="5Kwh"
@@ -102,7 +102,7 @@ export default function SensorManage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <StatBox title="Light 2"
+            <StatBox title="Light: 29"
             subtitle="Active for 3 hours"
             progress="50"
             increase="5Kwh"
