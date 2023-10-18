@@ -12,6 +12,8 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import TaskPage from './pages/TaskPage';
 import TaskShowPage from './pages/TaskShowPage';
 import UserShowPage from './pages/UserShowPage';
+import UserManage from './pages/UserManage';
+import SensorManage from './pages/SensorManage';
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +42,8 @@ export default function Router() {
             { path: 'show', element: <TaskShowPage /> }, 
           ],
         },
+        { path: 'usr', element: <UserManage /> },
+        { path: 'sensor', element: <SensorManage /> },
       ],
     },
     {
