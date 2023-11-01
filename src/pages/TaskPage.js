@@ -31,6 +31,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import CloseIcon from '@mui/icons-material/Close';
+import { useDispatch } from 'react-redux';
+import { startEditTask } from '../store/reducers';
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
@@ -39,7 +41,8 @@ import Scrollbar from '../components/scrollbar';
 import { TaskListHead, TaskListToolbar } from '../sections/@dashboard/task';
 // mock
 import TASKLIST from '../_mock/task';
-import { useGetPokemonByNameQuery,useGetAllTasksQuery } from '../service';
+import {useGetAllTasksQuery } from '../service';
+
 
 
 // ----------------------------------------------------------------------
@@ -72,8 +75,8 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
+  const stabilizedThis = array?.map((el, index) => [el, index]);
+  stabilizedThis?.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
@@ -81,11 +84,11 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
-  return stabilizedThis.map((el) => el[0]);
+  return stabilizedThis?.map((el) => el[0]);
 }
 
 export default function TaskPage() {
-
+  const { data, error, isLoading, isFetching } = useGetAllTasksQuery();
 
   const [openTask, setOpenTask] = useState(false);
 
@@ -103,7 +106,15 @@ export default function TaskPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleOpenMenu = (event) => {
+  const dispatch = useDispatch()
+
+  const startEdit = (id) => {
+    dispatch(startEditTask(id))
+  }
+
+
+  const handleOpenMenu = (event, id) => {
+    dispatch(startEditTask(id))
     setOpen(event.currentTarget);
   };
 
@@ -164,15 +175,16 @@ export default function TaskPage() {
     setOpenTask(false);
   };
 
+  
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - TASKLIST.length) : 0;
+  
+  const filteredUsers = applySortFilter(data, getComparator(order, orderBy), filterName);
 
-  const filteredUsers = applySortFilter(TASKLIST, getComparator(order, orderBy), filterName);
-
-  const isNotFound = !filteredUsers.length && !!filterName;
+  const isNotFound = !filteredUsers?.length && !! filterName;
 
 
-  const { data, error, isLoading } = useGetAllTasksQuery();
-  console.log(data)
+  
   return (
     <>
       <Helmet>
@@ -202,8 +214,9 @@ export default function TaskPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, type, avatarUrl, time } = row;
+
+                  {filteredUsers?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    const { id, name, data, status, type, avatarUrl, createdAt } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -223,15 +236,15 @@ export default function TaskPage() {
 
                         <TableCell align="left">{type}</TableCell>
 
-                        <TableCell align="left">{time}</TableCell>
+                        <TableCell align="left">{createdAt}</TableCell>
 
-                        <TableCell align="left">{role}</TableCell>
+                        <TableCell align="left">{data?.role}</TableCell>
 
                         <TableCell align="left">
                           <Label color={(status === 'Not Handled' && 'error') || 'success'}>{sentenceCase(status)}</Label>
                         </TableCell>
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, id)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -304,7 +317,7 @@ export default function TaskPage() {
       >
         <MenuItem>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2}} />
-          <Link component={RouterLink} to="/dashboard/task/show" underline="none" color="inherit">
+          <Link component={RouterLink} to="/dashboard/task/show" underline="none" color="inherit" >
           Edit
           </Link>
         </MenuItem>
@@ -312,9 +325,6 @@ export default function TaskPage() {
         <MenuItem sx={{ color: 'error.main' }} onClick={handleDeleteTask}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
-
-          
-
         </MenuItem>
       </Popover>
       {/* Dialog to alert when to delete */}

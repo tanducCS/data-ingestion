@@ -5,8 +5,11 @@ const taskApi = API.injectEndpoints({
     getAllTasks: build.query({
       query: () => 'task',
     }),
+    getTaskById: build.query({
+      query: (id) => `task/${id}`
+    })
   }),
   overrideExisting: true,
 });
 
-export const {useGetAllTasksQuery} = taskApi
+export const {useGetAllTasksQuery,useGetTaskByIdQuery} = taskApi
