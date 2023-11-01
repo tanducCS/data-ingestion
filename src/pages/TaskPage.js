@@ -39,6 +39,8 @@ import Scrollbar from '../components/scrollbar';
 import { TaskListHead, TaskListToolbar } from '../sections/@dashboard/task';
 // mock
 import TASKLIST from '../_mock/task';
+import { useGetPokemonByNameQuery,useGetAllTasksQuery } from '../service';
+
 
 // ----------------------------------------------------------------------
 
@@ -83,6 +85,8 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function TaskPage() {
+
+
   const [openTask, setOpenTask] = useState(false);
 
   const [open, setOpen] = useState(null);
@@ -166,6 +170,9 @@ export default function TaskPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+
+  const { data, error, isLoading } = useGetAllTasksQuery();
+  console.log(data)
   return (
     <>
       <Helmet>

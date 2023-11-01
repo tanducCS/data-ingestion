@@ -1,26 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice} from '@reduxjs/toolkit';
 
-const slice = createSlice({
-    name: "task",
-    initialState: { theme: null, darkMode: null },
-    reducers: {
-      actionA: (state, { payload: { theme, darkMode } }) => {
-        if (typeof theme !== "undefined") {
-          state.theme = theme;
-        }
-        if (typeof darkMode !== "undefined") {
-          state.darkMode = darkMode;
-        }
-      },
-      actionB: (state, { payload: { theme, darkMode } }) => {
-        if (!state.theme) {
-          state.theme = theme;
-          state.darkMode = darkMode;
-        }
-      },
-    },
-  });
-  
-  export const { actionA, actionB } = slice.actions;
-  
-  export const homeReducers = slice.reducer;
+const initialState  = {
+    tasklist : [],
+    task: null,
+  };
+
+
+const taskSlice = createSlice({
+  name: 'task',
+  initialState,
+  reducers: {},    
+});
+
+export const taskReducer  = taskSlice.reducer;
