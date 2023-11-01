@@ -10,19 +10,16 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist/es/constants";
-import { homeReducers, themeReducers } from "./reducers";
-import { API } from "./Services/base";
+import { API } from "../service/base";
+
 
 const reducers = combineReducers({
   api: API.reducer,
-  theme: themeReducers,
-  home: homeReducers,
 });
 
 const persistConfig = {
   key: "root",
-  storage, // Sử dụng "redux-persist" mặc định cho web (localStorage)
-  whitelist: ["theme"],
+  storage, 
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

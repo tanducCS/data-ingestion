@@ -8,7 +8,7 @@ import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
 
-const API_URL = 'http://hpcc.hcmut.edu.vn:13001/auth/login';
+const API_URL = 'http://localhost:3000/auth/login';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
