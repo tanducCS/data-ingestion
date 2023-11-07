@@ -4,9 +4,6 @@ import { Box, Switch, Typography, useTheme } from "@mui/material";
 // import axios from 'axios';
 
 const StatBox = ({ title, subtitle, icon, progress, increase }) => {
-
-
-
   return (
     <Box width="100%" m="0 0px" p="10px" bgcolor="#E1F2F0" sx={{ borderRadius: 1}}>
       <Box display="flex" justifyContent="space-between">

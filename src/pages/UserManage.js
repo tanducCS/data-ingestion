@@ -16,7 +16,7 @@ import {
   AppWidgetSummary,
   AppCurrentSubject,
   AppConversionRates,
-  AppFormInput,
+  AppUploadFile,
 } from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
@@ -32,11 +32,11 @@ export default function UseManage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back
+          Quản Lý Người Dùng
         </Typography>
 
         <Grid container spacing={3}>
-            <AppFormInput/>
+            <AppUploadFile/>
         </Grid>
       </Container>
     </>

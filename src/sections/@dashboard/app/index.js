@@ -7,4 +7,4 @@ export { default as AppWebsiteVisits } from './AppWebsiteVisits';
 export { default as AppWidgetSummary } from './AppWidgetSummary';
 export { default as AppCurrentSubject } from './AppCurrentSubject';
 export { default as AppConversionRates } from './AppConversionRates';
-export { default as AppFormInput } from './AppFormInput';
+export { default as AppUploadFile } from './AppUploadFile';
