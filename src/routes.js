@@ -10,6 +10,9 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import TaskPage from './pages/TaskPage';
+import SchemaPage from './pages/SchemaPage';
+import DataSourcePage from './pages/DataSourcePage';
+import DataSourceShowPage from './pages/DataSourceShowPage';
 import TaskShowPage from './pages/TaskShowPage';
 import UserShowPage from './pages/UserShowPage';
 import UserManage from './pages/UserManage';
@@ -34,6 +37,13 @@ export default function Router() {
           ]
         },
         { path: 'products', element: <ProductsPage /> },
+        { path: 'schema', element: <SchemaPage /> },
+        { path: 'data-source',
+          children: [
+            { path: 'index', element: <DataSourcePage /> }, 
+            { path: 'show', element: <DataSourceShowPage /> }, 
+          ],
+        },
         { path: 'blog', element: <BlogPage /> },
         {
           path: 'task',

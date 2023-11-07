@@ -18,7 +18,7 @@ const navConfig = [
   },
   {
     title: 'Quản lý nguồn dữ liệu',
-    path: '/dashboard/blog',
+    path: '/dashboard/data-source',
     icon: icon('ic_data-source'),
   },
   {
