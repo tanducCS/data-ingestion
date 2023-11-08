@@ -1,8 +1,6 @@
 import { Helmet } from 'react-helmet-async';
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 // @mui
 import {
   Card,
@@ -12,34 +10,39 @@ import {
   Typography,
   CardHeader,
   CardContent,
-  CircularProgress,
   TextField,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
-// components
+
+// RTK Query
+import { useAddUserMutation } from '../service';
 
 
-import { useGetUsersByIdQuery } from '../service';
+const initialForm = {
+    name: '',
+    username: '',
+    password: '',
+    role: '',
+    email: '',
+    organization:'',
+}
 
-export default function UserShowPage() {
+export default function UserNewPage() {
   const navigate = useNavigate();
 
-  const userId = useSelector((state) => state.user.userId)
+  const [addUser, addUserResult] = useAddUserMutation()
 
-  const {data, error, isLoading, isFetching} = useGetUsersByIdQuery(userId)
-
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(initialForm);
  
   const handleChangeInput = (e) => {
     const {id, value} = e.target
     setFormData({...formData, [id]: value})
   }
 
-  useEffect(() => {
-    if (data) {
-      setFormData(data);
-    }
-  }, [data]);
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    addUser(formData)
+  }
 
   return (
     <>
@@ -55,14 +58,12 @@ export default function UserShowPage() {
         </Stack>
 
         <Card>
-          <CardHeader title="Chỉnh sửa thông tin người dùng" />
+          <CardHeader title="Thêm người dùng" />
           <CardContent>
-            {data ? 
-                  <form>
+            <form onSubmit={handleSubmit}>
                   <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.name}
                       required
                       id="name"
                       label="Tên người dùng"
@@ -74,7 +75,6 @@ export default function UserShowPage() {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.email}
                       required
                       id="email"
                       label="Email"
@@ -86,7 +86,6 @@ export default function UserShowPage() {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.username}
                       required
                       id="username"
                       label="Tên tài khoản"
@@ -100,17 +99,18 @@ export default function UserShowPage() {
                   <Grid item xs={12} md={6}>
                     <TextField
                       required
+                      type='password'
                       id="password"
                       label="Mật khẩu"
                       helperText="Last three digits on signature strip"
                       fullWidth
                       autoComplete="password"
                       variant="standard"
+                      onChange={handleChangeInput}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.role}
                       required
                       id="role"
                       label="Vai trò"
@@ -122,7 +122,6 @@ export default function UserShowPage() {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.organization}
                       required
                       id="organization"
                       label="Tổ chức"
@@ -138,9 +137,6 @@ export default function UserShowPage() {
                   </Grid>
                 </Grid>
               </form> 
-              :
-              <CircularProgress />
-            }
           </CardContent>
         </Card>
       </Container>

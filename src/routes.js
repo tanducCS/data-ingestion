@@ -17,6 +17,7 @@ import TaskShowPage from './pages/TaskShowPage';
 import UserShowPage from './pages/UserShowPage';
 import UserManage from './pages/UserManage';
 import SensorManage from './pages/SensorManage';
+import UserNewPage from './pages/UserNewPage';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ export default function Router() {
           children: [
             {path: 'index', element: <UserPage/>},
             {path: 'show', element: <UserShowPage/>},
+            {path: 'new', element: <UserNewPage/>},
           ]
         },
         { path: 'products', element: <ProductsPage /> },
