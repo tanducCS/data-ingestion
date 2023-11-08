@@ -3,6 +3,7 @@ import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
+
 // @mui
 import {
   Card,
@@ -23,13 +24,20 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Skeleton,
 } from '@mui/material';
+
+import { useDispatch } from 'react-redux';
+import { startEditUser } from '../store/reducers';
+
+import { useGetAllUsersQuery } from '../service';
+
 // components
-import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+
 // mock
 import USERLIST from '../_mock/user';
 
@@ -62,8 +70,8 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
+  const stabilizedThis = array?.map((el, index) => [el, index]);
+  stabilizedThis?.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
@@ -71,10 +79,14 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
-  return stabilizedThis.map((el) => el[0]);
+  return stabilizedThis?.map((el) => el[0]);
 }
 
 export default function UserPage() {
+  const { data, error, isLoading, isFetching } = useGetAllUsersQuery()
+  
+  const dispatch = useDispatch()
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -89,7 +101,8 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (event, id) => {
+    dispatch(startEditUser(id))
     setOpen(event.currentTarget);
   };
 
@@ -141,12 +154,14 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(data, getComparator(order, orderBy), filterName) ;
 
-  const isNotFound = !filteredUsers.length && !!filterName;
+  const isNotFound = !filteredUsers?.length && !!filterName;
 
+  
   return (
     <>
       <Helmet>
@@ -179,9 +194,10 @@ export default function UserPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, company, avatarUrl, email } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                  {
+                    filteredUsers ? filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                      const { id, name, role, company, avatarUrl, email } = row;
+                      const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
@@ -207,13 +223,34 @@ export default function UserPage() {
                         
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, id)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
                     );
-                  })}
+                    
+                  }) : 
+                  (
+                    <TableRow>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                    </TableRow>
+                  )
+                  }
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />

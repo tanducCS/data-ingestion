@@ -168,7 +168,6 @@ export default function TaskShowPage() {
 
   const {data, error, isLoading, isFetching} = useGetTaskByIdQuery(taskId)
 
-  console.log(data) 
 
   return (
     <>
