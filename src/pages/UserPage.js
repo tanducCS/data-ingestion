@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
+import { NavLink as RouterLink, useNavigate } from 'react-router-dom';
 
 // @mui
 import {
@@ -83,6 +83,8 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
+  const navigate = useNavigate();
+
   const { data, error, isLoading, isFetching } = useGetAllUsersQuery()
   
   const dispatch = useDispatch()
@@ -173,7 +175,7 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => navigate('/dashboard/user/new')}>
             New User
           </Button>
         </Stack>
