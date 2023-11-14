@@ -16,28 +16,57 @@ import {
   TextField,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
-// components
+import { useDeleteUserMutation, useGetUsersByIdQuery, useUpdateUserMutation } from '../service';
 
+const initialForm = {
+  name: '',
+  role: '',
+  email: '',
+  organization:'',
+}
 
-import { useGetUsersByIdQuery } from '../service';
 
 export default function UserShowPage() {
   const navigate = useNavigate();
+
+  const [deleteUser] = useDeleteUserMutation()
 
   const userId = useSelector((state) => state.user.userId)
 
   const {data, error, isLoading, isFetching} = useGetUsersByIdQuery(userId)
 
-  const [formData, setFormData] = useState({});
+  const [updateUser, updateUserResult] = useUpdateUserMutation()
+
+  const [formData, setFormData] = useState(initialForm);
  
   const handleChangeInput = (e) => {
     const {id, value} = e.target
     setFormData({...formData, [id]: value})
   }
 
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    try{
+      await updateUser({
+        body: formData,
+        id: userId,
+      }).unwrap()
+    }
+    catch (error){
+      console.log(error)
+    }
+    
+    setFormData(initialForm)
+  }
+
+  const handleDeleteUser = async (id) => {
+    deleteUser(id)
+  }
+
   useEffect(() => {
     if (data) {
-      setFormData(data);
+      const {name,role,email,organization} = data
+      setFormData({name,role,email,organization});
     }
   }, [data]);
 
@@ -58,7 +87,7 @@ export default function UserShowPage() {
           <CardHeader title="Chỉnh sửa thông tin người dùng" />
           <CardContent>
             {data ? 
-                  <form>
+                  <form onSubmit={handleSubmit}>
                   <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
                     <TextField
@@ -86,30 +115,6 @@ export default function UserShowPage() {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.username}
-                      required
-                      id="username"
-                      label="Tên tài khoản"
-                      fullWidth
-                      autoComplete="username"
-                      variant="standard"
-                      onChange={handleChangeInput}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} md={6}>
-                    <TextField
-                      required
-                      id="password"
-                      label="Mật khẩu"
-                      helperText="Last three digits on signature strip"
-                      fullWidth
-                      autoComplete="password"
-                      variant="standard"
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField
                       defaultValue={data?.role}
                       required
                       id="role"
@@ -133,8 +138,9 @@ export default function UserShowPage() {
                     />
                   </Grid>
                   <Grid container justifyContent="center"  item xs={12} sx={{ alignItems: 'center' }}>
-                    <Button type='button' onClick={() => navigate(-1)}>Quay lại</Button>
-                    <Button type='submit' >Tạo mới</Button>
+                    <Button sx={{marginX: '10px'}} type='button' variant="outlined" onClick={() => navigate(-1)}>Quay lại</Button>
+                    <Button sx={{marginX: '10px'}} type='submit' variant="outlined">Chỉnh sửa</Button>
+                    <Button sx={{marginX: '10px'}} type='button' variant="outlined" color="error" onClick={() => handleDeleteUser(userId)}>Xóa</Button>
                   </Grid>
                 </Grid>
               </form> 

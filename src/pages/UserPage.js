@@ -27,10 +27,10 @@ import {
   Skeleton,
 } from '@mui/material';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { startEditUser } from '../store/reducers';
 
-import { useGetAllUsersQuery } from '../service';
+import { useGetAllUsersQuery,useDeleteUserMutation } from '../service';
 
 // components
 import Iconify from '../components/iconify';
@@ -87,7 +87,11 @@ export default function UserPage() {
 
   const { data, error, isLoading, isFetching } = useGetAllUsersQuery()
   
+  const userId = useSelector((state) => state.user.userId)
+
   const dispatch = useDispatch()
+
+  const [deleteUser] = useDeleteUserMutation()
 
   const [open, setOpen] = useState(null);
 
@@ -102,6 +106,10 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleDeleteUser = (userId) => {
+    deleteUser(userId)
+  }
 
   const handleOpenMenu = (event, id) => {
     dispatch(startEditUser(id))
@@ -324,7 +332,8 @@ export default function UserPage() {
           </Link>
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        <MenuItem onClick={() => handleDeleteUser(userId)} sx={{ color: 'error.main' }}
+        >
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
