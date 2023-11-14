@@ -1,8 +1,8 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import { useState } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
+import { NavLink as RouterLink, useNavigate } from 'react-router-dom';
+
 // @mui
 import {
   Card,
@@ -12,10 +12,10 @@ import {
   Avatar,
   Button,
   Popover,
+  Link,
   Checkbox,
   TableRow,
   MenuItem,
-  Link,
   TableBody,
   TableCell,
   Container,
@@ -23,37 +23,31 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
-  Divider,
+  Skeleton,
 } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import CloseIcon from '@mui/icons-material/Close';
+
 import { useDispatch } from 'react-redux';
-import { startEditTask } from '../store/reducers';
+import { startEditDataSources } from '../store/reducers';
+
+import { useGetAllDataSourcesQuery } from '../service';
+
 // components
-import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { TaskListHead, TaskListToolbar } from '../sections/@dashboard/task';
+import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+
 // mock
-import TASKLIST from '../_mock/task';
-import { useGetAllDataSourceQuery } from '../service';
-
-
+import USERLIST from '../_mock/user';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Tên', alignRight: false },
-  { id: 'username', label: 'Người Dùng', alignRight: false },
-  { id: 'topic', label: 'Topic', alignRight: false },
-  { id: 'type', label: 'Phương thức gửi', alignRight: false },
-  { id: 'schema', label: 'Schema', alignRight: false },
-  { id: 'status', label: 'Trạng Thái', alignRight: false },
+  { id: 'name', label: 'Name', alignRight: false },
+  { id: 'type', label: 'Loại', alignRight: false },
+  { id: 'createdAt', label: 'Ngày khởi tạo', alignRight: false },
+  { id: 'updatedAt', label: 'Ngày cập nhập', alignRight: false },
+  { id: 'desctiption', label: 'Mô tả', alignRight: false },
   { id: '' },
 ];
 
@@ -88,10 +82,14 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis?.map((el) => el[0]);
 }
 
-export default function TaskPage() {
-  const { data, error, isLoading, isFetching } = useGetAllDataSourceQuery();
+export default function DataSourcesPage() {
+  const navigate = useNavigate();
 
-  const [openTask, setOpenTask] = useState(false);
+  const { data, error, isLoading, isFetching } = useGetAllDataSourcesQuery()
+  
+
+  const dispatch = useDispatch()
+
 
   const [open, setOpen] = useState(null);
 
@@ -107,15 +105,8 @@ export default function TaskPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const dispatch = useDispatch()
-
-  const startEdit = (id) => {
-    dispatch(startEditTask(id))
-  }
-
-
   const handleOpenMenu = (event, id) => {
-    dispatch(startEditTask(id))
+    dispatch(startEditDataSources(id))
     setOpen(event.currentTarget);
   };
 
@@ -123,8 +114,6 @@ export default function TaskPage() {
     setOpen(null);
   };
 
-
-  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -133,7 +122,7 @@ export default function TaskPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = TASKLIST.map((n) => n.name);
+      const newSelecteds = USERLIST.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -169,56 +158,52 @@ export default function TaskPage() {
     setFilterName(event.target.value);
   };
 
-  const handleDeleteTask = () => {
-    setOpenTask(true);
-  };
-  const handleCloseDeleteTask = () => {
-    setOpenTask(false);
-  };
 
-  
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - TASKLIST.length) : 0;
-  
-  const filteredUsers = applySortFilter(data, getComparator(order, orderBy), filterName);
+  const filteredDataSources = applySortFilter(data, getComparator(order, orderBy), filterName) ;
 
-  const isNotFound = !filteredUsers?.length && !! filterName;
+  const isNotFound = !filteredDataSources?.length && !!filterName;
 
+  console.log(data)
 
   
   return (
     <>
       <Helmet>
-        <title> Manage Tasks </title>
+        <title> Manage Users </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Task
+            User
           </Typography>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => navigate('/dashboard/user/new')}>
+            New User
+          </Button>
         </Stack>
 
         <Card>
-          <TaskListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <TaskListHead
+                <UserListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={TASKLIST.length}
+                  rowCount={USERLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-
-                  {filteredUsers?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, user , category , type , status, schema , avatar , createdAt } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                  {
+                    filteredDataSources ? filteredDataSources.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                      const { id, name, type, status, avatarUrl, description, createdAt, updatedAt } = row;
+                      const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
@@ -228,24 +213,23 @@ export default function TaskPage() {
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatar} />
+                            <Avatar alt={name} src={avatarUrl} />
                             <Typography variant="subtitle2" noWrap>
                               {name}
                             </Typography>
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{user?.username}</TableCell>
-
-                        <TableCell align="left">{category?.topic}</TableCell>
-
                         <TableCell align="left">{type}</TableCell>
 
-                        <TableCell align="left">{schema}</TableCell>
+                        <TableCell align="left">{createdAt}</TableCell>
 
-                        <TableCell align="left">
-                          <Label color={(status === 'Not Handled' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
+                        <TableCell align="left">{updatedAt}</TableCell>
+
+                        <TableCell align="left">{description}</TableCell>
+
+                        
+
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, id)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
@@ -253,7 +237,28 @@ export default function TaskPage() {
                         </TableCell>
                       </TableRow>
                     );
-                  })}
+                    
+                  }) : 
+                  (
+                    <TableRow>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton animation="wave" />
+                      </TableCell>
+                    </TableRow>
+                  )
+                  }
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
@@ -291,7 +296,7 @@ export default function TaskPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={TASKLIST.length}
+            count={USERLIST.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -319,54 +324,18 @@ export default function TaskPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2}} />
-          <Link component={RouterLink} to="/dashboard/task/show" underline="none" color="inherit" >
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+          <Link component={RouterLink} to="/dashboard/data_sources/show" underline="none" color="inherit">
           Edit
           </Link>
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }} onClick={handleDeleteTask}>
+        <MenuItem sx={{ color: 'error.main' }}
+        >
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>
-      {/* Dialog to alert when to delete */}
-      <Dialog
-            fullWidth='true'
-            maxWidth='sm'
-            open={openTask}
-            onClose={handleCloseDeleteTask}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {"Xác nhận"}
-            </DialogTitle>
-            <IconButton
-              aria-label="close"
-              onClick={handleCloseDeleteTask}
-              sx={{
-                position: 'absolute',
-                right: 8,
-                top: 8,
-                color: (theme) => theme.palette.grey[500],
-              }}
-            >
-              <CloseIcon/>
-            </IconButton>
-            <Divider />
-            <DialogContent >
-              <DialogContentText id="alert-dialog-description">
-                Bạn muốn xóa tác vụ này?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button variant='outlined' onClick={handleCloseDeleteTask} color='success'>HỦY</Button>
-              <Button variant='contained' onClick={handleCloseDeleteTask} autoFocus color="error">
-                XÓA
-              </Button>
-            </DialogActions>
-          </Dialog>
     </>
   );
 }
