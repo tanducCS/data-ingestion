@@ -11,7 +11,7 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import TaskPage from './pages/TaskPage';
 import SchemaPage from './pages/SchemaPage';
-import DataSourcePage from './pages/DataSourcePage';
+import DataSourcesPage from './pages/DataSourcePage';
 import DataSourceShowPage from './pages/DataSourceShowPage';
 import TaskShowPage from './pages/TaskShowPage';
 import UserShowPage from './pages/UserShowPage';
@@ -40,9 +40,9 @@ export default function Router() {
         },
         { path: 'products', element: <ProductsPage /> },
         { path: 'schema', element: <SchemaPage /> },
-        { path: 'data-source',
+        { path: 'data_sources',
           children: [
-            { path: 'index', element: <DataSourcePage /> }, 
+            { path: 'index', element: <DataSourcesPage /> }, 
             { path: 'show', element: <DataSourceShowPage /> }, 
           ],
         },

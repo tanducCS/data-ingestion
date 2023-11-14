@@ -1,12 +1,15 @@
 import { API } from "../base";
 
-const dataSourceApi = API.injectEndpoints({
+const dataSourcesApi = API.injectEndpoints({
   endpoints: (build) => ({
-    getAllDataSource: build.query({
+    getAllDataSources: build.query({
       query: () => 'data-sources',
+    }),
+    getDataSourceById: build.query({
+      query: (id) => `data-sources/${id}`
     }),
   }),
   overrideExisting: true,
 });
 
-export const {useGetAllDataSourceQuery} = dataSourceApi
+export const {useGetAllDataSourcesQuery, useGetDataSourceByIdQuery} = dataSourcesApi

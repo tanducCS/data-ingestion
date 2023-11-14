@@ -11,11 +11,12 @@ import {
   REGISTER,
 } from "redux-persist/es/constants";
 import { API } from "../service/base";
-import { taskReducer, userReducer } from "./reducers";
+import { dataSourcesReducer, taskReducer, userReducer } from "./reducers";
 
 
 
 const reducers = combineReducers({
+  data_sources: dataSourcesReducer,
   user: userReducer,
   task: taskReducer,  
   api: API.reducer,
