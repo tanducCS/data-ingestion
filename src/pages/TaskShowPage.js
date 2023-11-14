@@ -1,173 +1,49 @@
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // @mui
 import {
+  CircularProgress,
   Card,
-  Table,
+  CardContent,
+  TextField,
   Stack,
-  Paper,
-  Avatar,
   Button,
-  Popover,
-  Checkbox,
-  TableRow,
-  MenuItem,
-  TableBody,
-  TableCell,
   Container,
   Typography,
-  Link,
-  IconButton,
-  TableContainer,
-  TablePagination,
   CardHeader,
-  useTheme,
-  Divider,
-  Skeleton,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import CloseIcon from '@mui/icons-material/Close';
 
 import { useSelector } from 'react-redux';
 import { useGetTaskByIdQuery } from '../service';
-// components
-import Label from '../components/label';
-import Iconify from '../components/iconify';
-import Scrollbar from '../components/scrollbar';
-// sections
-// mock
-import TASKLIST from '../_mock/task';
 
 // ----------------------------------------------------------------------
 
-
-// ----------------------------------------------------------------------
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
+const initialForm = {
+  name: '',
+  email: '',
+  description: '',
+  organization:'',
 }
 
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
 
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
-}
+
 
 export default function TaskShowPage() {
 
-  const [openTask, setOpenTask] = useState(false);
-
-  const [open, setOpen] = useState(null);
-
-  const [page, setPage] = useState(0);
-
-  const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
-
-  const [orderBy, setOrderBy] = useState('name');
-
-  const [filterName, setFilterName] = useState('');
-
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = TASKLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
-
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
-
-  const handleDeleteTask = () => {
-    setOpenTask(true);
-  };
-  const handleCloseDeleteTask = () => {
-    setOpenTask(false);
-  };
+  const navigate = useNavigate();
 
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - TASKLIST.length) : 0;
+ 
 
-  const filteredUsers = applySortFilter(TASKLIST, getComparator(order, orderBy), filterName);
 
-  const isNotFound = !filteredUsers.length && !!filterName;
 
   const taskId = useSelector((state) => state.task.taskId)
 
   const {data, error, isLoading, isFetching} = useGetTaskByIdQuery(taskId)
 
+  console.log(data)
 
   return (
     <>
@@ -182,224 +58,125 @@ export default function TaskShowPage() {
           </Typography>
         </Stack>
 
-        {isFetching ? (
-            <Skeleton animation="wave" />
-        ) :(
-          <Card sx={{
-            padding: '2em'
-          }}
-          >
-              <Grid container spacing={1} justifyContent="space-around"  sx={{ marginBottom: '100px' }}>
-                <Grid container item xs>
-                  <Typography variant="h4" >
-                    Thông tin tác vụ
-                  </Typography>
-                </Grid>
-                <Grid container item xs justifyContent="space-between" >
-                  <Grid item  >
-                    <Button variant="outlined" color="success">Quay lại</Button>
+        <Card>
+          <CardHeader title="Thông tin tác vụ" />
+          <CardContent>
+            {data ? 
+                  <form >
+                  <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      defaultValue={data?.name}
+                      required
+                      id="name"
+                      label="Tên người yêu cầu"
+                      fullWidth
+                      autoComplete="name"
+                      variant="standard"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
                   </Grid>
-                  <Grid >
-                    <Button variant="contained" item  color="success" sx={{color: 'white'}}>Đánh dấu đã xử ly</Button>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      defaultValue={data?.type}
+                      required
+                      id="type"
+                      label="Loại yêu cầu"
+                      fullWidth
+                      autoComplete="type"
+                      variant="standard"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
                   </Grid>
-                  <Grid item >
-                    <Button  variant="contained" color="error" onClick={handleDeleteTask}>Xóa tác vụ</Button>
-  
-                    {/* Dialog to alert when to delete */}
-                    <Dialog
-                      fullWidth='true'
-                      maxWidth='sm'
-                      open={openTask}
-                      onClose={handleCloseDeleteTask}
-                      aria-labelledby="alert-dialog-title"
-                      aria-describedby="alert-dialog-description"
-                    >
-                      <DialogTitle id="alert-dialog-title">
-                        {"Xác nhận"}
-                      </DialogTitle>
-                      <IconButton
-                        aria-label="close"
-                        onClick={handleCloseDeleteTask}
-                        sx={{
-                          position: 'absolute',
-                          right: 8,
-                          top: 8,
-                          color: (theme) => theme.palette.grey[500],
-                        }}
-                      >
-                        <CloseIcon/>
-                      </IconButton>
-                      <Divider />
-                      <DialogContent >
-                        <DialogContentText id="alert-dialog-description">
-                          Bạn muốn xóa tác vụ này?
-                        </DialogContentText>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button variant='outlined' onClick={handleCloseDeleteTask} color='success'>HỦY</Button>
-                        <Button variant='contained' onClick={handleCloseDeleteTask} autoFocus color="error">
-                          XÓA
-                        </Button>
-                      </DialogActions>
-                    </Dialog>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      defaultValue={data?.data.organization}
+                      required
+                      id="organization"
+                      label="Tổ Chức"
+                      fullWidth
+                      autoComplete="organization"
+                      variant="standard"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
                   </Grid>
-                </Grid>
-              </Grid>
-  
-              <Grid container spacing={6}>
-                <Grid container item xs={6}>
-                  <Grid item xs={4}>
-                    <Typography variant="h6" >
-                      Tên người yêu cầu:
-                    </Typography>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      defaultValue={data.status}
+                      required
+                      id="status"
+                      label="Trạng thái"
+                      fullWidth
+                      autoComplete="status"
+                      variant="standard"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
                   </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant="h8" xs={{innerHeight: '100%'}} >
-                      {data.name}
-                    </Typography>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      defaultValue={data?.email}
+                      required
+                      id="email"
+                      label="Email"
+                      fullWidth
+                      autoComplete="email"
+                      variant="standard"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
                   </Grid>
-                </Grid>
-  
-                <Grid container item xs={6}>
-                  <Grid item xs={4}>
-                    <Typography variant="h6" >
-                      Loại yêu cầu:
-                    </Typography>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      defaultValue={data?.description}
+                      required
+                      id="description"
+                      label="Mô tả"
+                      fullWidth
+                      autoComplete="description"
+                      variant="standard"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
                   </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant="h8" xs={{innerHeight: '100%'}} >
-                      {data.type === "SIGNUP_REQUEST" ? "Đăng ký" : "..."}
-                    </Typography>
+                  
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      defaultValue={data?.note}
+                      required
+                      id="note"
+                      label="Ghi chú"
+                      fullWidth
+                      autoComplete="note"
+                      variant="standard"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
                   </Grid>
-                </Grid>
-                
-                <Grid container item xs={6}>
-                  <Grid item xs={4}>
-                    <Typography variant="h6" >
-                      Tổ chức:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant="h8" xs={{innerHeight: '100%'}} >
-                      {data.data.organization}
-                    </Typography>
-                  </Grid>
-                </Grid>
-  
-                <Grid container item xs={6}>
-                  <Grid item xs={4}>
-                    <Typography variant="h6" >
-                      Trạng thái:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant="h8" xs={{innerHeight: '100%'}} >
-                      {data.status}
-                    </Typography>
+                  <Grid container justifyContent="center"  item xs={12} sx={{ alignItems: 'center' }}>
+                    <Button sx={{marginX: '10px'}} type='button' variant="outlined" onClick={() => navigate(-1)}>Quay lại</Button>
+                    <Button sx={{marginX: '10px'}} type='submit' variant="outlined">Đánh dấu đã xử lý</Button>
+                    <Button sx={{marginX: '10px'}} type='button' variant="outlined" color="error" >Xóa</Button>
                   </Grid>
                 </Grid>
-  
-                <Grid container item xs={6}>
-                  <Grid item xs={4}>
-                    <Typography variant="h6" >
-                      Email:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant="h8" xs={{innerHeight: '100%'}} >
-                      {data.email}
-                    </Typography>
-                  </Grid>
-                </Grid>
-  
-                <Grid container item xs={6}>
-                  <Grid item xs={4}>
-                    <Typography variant="h6" >
-                      Người xét duyệt:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant="h8" xs={{innerHeight: '100%'}} >
-                      Administrator
-                    </Typography>
-                  </Grid>
-                </Grid>
-  
-                <Grid container item xs={6}>
-                  <Grid item xs={4}>
-                    <Typography variant="h6" >
-                      Dữ liệu:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant="h8" xs={{innerHeight: '100%'}} >
-                      ....
-                    </Typography>
-                  </Grid>
-                </Grid>
-  
-                <Grid container item xs={6}>
-                  <Grid item xs={4}>
-                    <Typography variant="h6" >
-                      Ngày khởi tạo:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant="h8" xs={{innerHeight: '100%'}} >
-                      {data.createdAt}
-                    </Typography>
-                  </Grid>
-                </Grid>
-  
-                <Grid container item xs={6}>
-                  <Grid item xs={4}>
-                    <Typography variant="h6" >
-                      Ghi chú:
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Typography variant="h8" xs={{innerHeight: '100%'}} >
-                      {data.description}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-          </Card>
-        )}
+              </form> 
+              :
+              <CircularProgress />
+            }
+          </CardContent>
+        </Card>
       </Container>
 
-      
-
-
-
-      <Popover
-        open={Boolean(open)}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: {
-            p: 1,
-            width: 140,
-            '& .MuiMenuItem-root': {
-              px: 1,
-              typography: 'body2',
-              borderRadius: 0.75,
-            },
-          },
-        }}
-      >
-        <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          
-        </MenuItem>
-
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Popover>
     </>
   );
 }

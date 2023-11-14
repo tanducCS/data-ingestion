@@ -16,7 +16,8 @@ const userApi = API.injectEndpoints({
             [{ type: 'Users', id: 'LIST' }],
     }),
     getUsersById: build.query({
-      query: (id) => `users/${id}`
+      query: (id) => `users/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Users', id }],
     }),
     addUser: build.mutation({
       query(body){
@@ -28,9 +29,27 @@ const userApi = API.injectEndpoints({
       },
       invalidatesTags: [{ type: 'Users', id: 'LIST' }],
     }),
-    
+    updateUser: build.mutation({
+      query(data){
+        return {
+          url: `users/${data.id}`,
+          method: 'PATCH',
+          body: data.body,
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [{ type: 'Users', id }],
+    }),
+    deleteUser: build.mutation({
+      query(id){
+        return{
+          url: `users/${id}`,
+          method: 'DELETE',
+        }
+      },
+      invalidatesTags: (result, error, id) => [{ type: 'Users', id }],
+    })
   }),
   overrideExisting: true,
 });
 
-export const {useGetUsersByIdQuery,useGetAllUsersQuery,useAddUserMutation} = userApi
+export const {useGetUsersByIdQuery,useGetAllUsersQuery,useAddUserMutation,useUpdateUserMutation, useDeleteUserMutation} = userApi
