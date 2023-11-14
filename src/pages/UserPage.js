@@ -107,8 +107,8 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleDeleteUser = (userId) => {
-    deleteUser(userId)
+  const handleDeleteUser = async (userId) => {
+    await deleteUser(userId)
   }
 
   const handleOpenMenu = (event, id) => {

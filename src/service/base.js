@@ -22,7 +22,7 @@ const baseQueryWithInterceptor = async (args, api, extraOptions) => {
 
 export const API = createApi({
     baseQuery: baseQueryWithInterceptor,
-    tagTypes:["Users","Tasks"],
+    tagTypes:["Users","Tasks","DataCategories"],
     endpoints: () => ({}),
 })
 

@@ -26,10 +26,10 @@ import {
   Skeleton,
 } from '@mui/material';
 
-import { useDispatch } from 'react-redux';
-import { startEditDataSources } from '../store/reducers';
+import { useDispatch, useSelector } from 'react-redux';
+import { startEditDataCategory} from '../store/reducers';
 
-import { useGetAllDataSourcesQuery } from '../service';
+import { useDeleteDataCategoryMutation, useGetAllDataCategoriesQuery } from '../service';
 
 // components
 import Iconify from '../components/iconify';
@@ -82,14 +82,16 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis?.map((el) => el[0]);
 }
 
-export default function DataSourcesPage() {
+export default function DataCategoriesPage() {
   const navigate = useNavigate();
 
-  const { data, error, isLoading, isFetching } = useGetAllDataSourcesQuery()
+  const { data, error, isLoading, isFetching } = useGetAllDataCategoriesQuery()
   
-
   const dispatch = useDispatch()
 
+  const dataCategoryId = useSelector((state) => state.data_categories.data_categoryId)
+
+  const [deleteDataCategory] = useDeleteDataCategoryMutation();
 
   const [open, setOpen] = useState(null);
 
@@ -105,8 +107,12 @@ export default function DataSourcesPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const handleDeleteDataCategory = async (id) => {
+    await deleteDataCategory(id)
+  }
+
   const handleOpenMenu = (event, id) => {
-    dispatch(startEditDataSources(id))
+    dispatch(startEditDataCategory(id))
     setOpen(event.currentTarget);
   };
 
@@ -171,16 +177,16 @@ export default function DataSourcesPage() {
   return (
     <>
       <Helmet>
-        <title> Manage Data Sources </title>
+        <title> Manage Data Category </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Data Sources
+            Data Categories
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => navigate('/dashboard/user/new')}>
-            New Data Sources
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => navigate('/dashboard/data_categories/new')}>
+            New Data Category
           </Button>
         </Stack>
 
@@ -202,7 +208,7 @@ export default function DataSourcesPage() {
                 <TableBody>
                   {
                     filteredDataSources ? filteredDataSources.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                      const { id, name, type, status, avatarUrl, description, createdAt, updatedAt } = row;
+                      const { id, name, topic, avatarUrl, description, createdAt, updatedAt } = row;
                       const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -220,7 +226,7 @@ export default function DataSourcesPage() {
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{type}</TableCell>
+                        <TableCell align="left">{topic}</TableCell>
 
                         <TableCell align="left">{createdAt}</TableCell>
 
@@ -325,12 +331,12 @@ export default function DataSourcesPage() {
       >
         <MenuItem>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          <Link component={RouterLink} to="/dashboard/data_sources/show" underline="none" color="inherit">
+          <Link component={RouterLink} to="/dashboard/data_categories/show" underline="none" color="inherit">
           Edit
           </Link>
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}
+        <MenuItem sx={{ color: 'error.main' }} onClick={() => handleDeleteDataCategory(dataCategoryId)}
         >
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
