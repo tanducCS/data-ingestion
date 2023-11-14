@@ -18,6 +18,9 @@ import UserShowPage from './pages/UserShowPage';
 import UserManage from './pages/UserManage';
 import SensorManage from './pages/SensorManage';
 import UserNewPage from './pages/UserNewPage';
+import DataCategoriesPage from './pages/DataCategoriesPage';
+import DataCategoriesShowPage from './pages/DataCategoriesShowPage';
+import DataCategoriesNewPage from './pages/DataCategoriesNewPage';
 
 // ----------------------------------------------------------------------
 
@@ -44,6 +47,13 @@ export default function Router() {
           children: [
             { path: 'index', element: <DataSourcesPage /> }, 
             { path: 'show', element: <DataSourceShowPage /> }, 
+          ],
+        },
+        { path: 'data_categories',
+          children: [
+            { path: 'index', element: <DataCategoriesPage /> }, 
+            { path: 'show', element: <DataCategoriesShowPage /> }, 
+            { path: 'new', element: <DataCategoriesNewPage /> }, 
           ],
         },
         { path: 'blog', element: <BlogPage /> },

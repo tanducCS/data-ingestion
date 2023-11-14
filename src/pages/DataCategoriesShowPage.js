@@ -1,44 +1,49 @@
+import { useState,useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 // @mui
 import {
+  CircularProgress,
   Card,
+  CardContent,
+  TextField,
   Stack,
   Button,
   Container,
   Typography,
   CardHeader,
-  CardContent,
-  CircularProgress,
-  TextField,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { useDeleteUserMutation, useGetUsersByIdQuery, useUpdateUserMutation } from '../service';
+
+import { useSelector } from 'react-redux';
+import { useDeleteDataCategoryMutation, useGetDataCategoryByIdQuery, useUpdateDataCategoryMutation} from '../service';
+
+// ----------------------------------------------------------------------
 
 const initialForm = {
   name: '',
-  role: '',
-  email: '',
-  organization:'',
+  topic: '',
+  description: '',
 }
 
 
-export default function UserShowPage() {
+
+
+export default function DataCategoriesShowPage() {
+
   const navigate = useNavigate();
 
-  const [deleteUser] = useDeleteUserMutation()
+  const [formData, setFormData] = useState(initialForm)
 
-  const userId = useSelector((state) => state.user.userId)
+  const [deleteDataCategory] = useDeleteDataCategoryMutation()
+  
+  const [updateDataCategory, updateDataCategoryResult] = useUpdateDataCategoryMutation();
 
-  const {data, error, isLoading, isFetching} = useGetUsersByIdQuery(userId)
+  const dataCategoryId = useSelector((state) => state.data_categories.data_categoryId)
 
-  const [updateUser, updateUserResult] = useUpdateUserMutation()
+  const {data, error, isLoading, isFetching} = useGetDataCategoryByIdQuery(dataCategoryId)
 
-  const [formData, setFormData] = useState(initialForm);
- 
   const handleChangeInput = (e) => {
     const {id, value} = e.target
     setFormData({...formData, [id]: value})
@@ -47,54 +52,54 @@ export default function UserShowPage() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     try{
-      await updateUser({
+      await updateDataCategory({
         body: formData,
-        id: userId,
+        id: dataCategoryId,
       }).unwrap()
     }
     catch (error){
       console.log(error)
     }
-    
     setFormData(initialForm)
   }
 
-  const handleDeleteUser = async (id) => {
-    await deleteUser(id)
+  const handleDelete = async (id) => {
+    await deleteDataCategory(id)
   }
 
   useEffect(() => {
     if (data) {
-      const {name,role,email,organization} = data
-      setFormData({name,role,email,organization});
+      const {name,topic, description} = data
+      setFormData({name,topic, description});
     }
   }, [data]);
 
+  console.log(formData)
   return (
     <>
       <Helmet>
-        <title> User Detail </title>
+        <title> Data Category Detail </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Data Category
           </Typography>
         </Stack>
 
         <Card>
-          <CardHeader title="Chỉnh sửa thông tin người dùng" />
+          <CardHeader title="Chỉnh sửa thông tin danh mục dữ liệu" />
           <CardContent>
             {data ? 
                   <form onSubmit={handleSubmit}>
                   <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.name}
+                      defaultValue={data.name}
                       required
                       id="name"
-                      label="Tên người dùng"
+                      label="Tên danh mục"
                       fullWidth
                       autoComplete="name"
                       variant="standard"
@@ -103,44 +108,56 @@ export default function UserShowPage() {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.email}
+                      defaultValue={data.topic}
                       required
-                      id="email"
-                      label="Email"
+                      id="topic"
+                      label="Chủ đề"
                       fullWidth
-                      autoComplete="email"
+                      autoComplete="topic"
                       variant="standard"
                       onChange={handleChangeInput}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.role}
+                      defaultValue={data.createdAt}
                       required
-                      id="role"
-                      label="Vai trò"
+                      id="createdAt"
+                      label="Ngày khởi tạo"
                       fullWidth
-                      autoComplete="role"
+                      autoComplete="createdAt"
                       variant="standard"
-                      onChange={handleChangeInput}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      defaultValue={data?.organization}
+                      defaultValue={data.updatedAt}
                       required
-                      id="organization"
-                      label="Tổ chức"
+                      id="updatedAt"
+                      label="Ngày cập nhập"
                       fullWidth
-                      autoComplete="organization"
+                      autoComplete="updatedAt"
                       variant="standard"
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      defaultValue={data.description}
+                      required
+                      id="description"
+                      label="Mô tả"
+                      multiline 
+                      fullWidth
+                      autoComplete="description"
+                      variant="outlined"
+                      minRows={4}
                       onChange={handleChangeInput}
                     />
                   </Grid>
                   <Grid container justifyContent="center"  item xs={12} sx={{ alignItems: 'center' }}>
                     <Button sx={{marginX: '10px'}} type='button' variant="outlined" onClick={() => navigate(-1)}>Quay lại</Button>
                     <Button sx={{marginX: '10px'}} type='submit' variant="outlined">Chỉnh sửa</Button>
-                    <Button sx={{marginX: '10px'}} type='button' variant="outlined" color="error" onClick={() => handleDeleteUser(userId)}>Xóa</Button>
+                    <Button sx={{marginX: '10px'}} type='button' variant="outlined" color="error" onClick={() => handleDelete(dataCategoryId)}>Xóa</Button>
                   </Grid>
                 </Grid>
               </form> 
@@ -150,6 +167,7 @@ export default function UserShowPage() {
           </CardContent>
         </Card>
       </Container>
+
     </>
   );
 }
