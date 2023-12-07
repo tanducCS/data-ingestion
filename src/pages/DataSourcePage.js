@@ -165,7 +165,7 @@ export default function DataSourcesPage() {
 
   const isNotFound = !filteredDataSources?.length && !!filterName;
 
-  console.log(data)
+ 
 
   
   return (
