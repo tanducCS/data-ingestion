@@ -10,7 +10,6 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import TaskPage from './pages/TaskPage';
-import SchemaPage from './pages/SchemaPage';
 import DataSourcesPage from './pages/DataSourcePage';
 import DataSourceShowPage from './pages/DataSourceShowPage';
 import TaskShowPage from './pages/TaskShowPage';
@@ -21,6 +20,9 @@ import UserNewPage from './pages/UserNewPage';
 import DataCategoriesPage from './pages/DataCategoriesPage';
 import DataCategoriesShowPage from './pages/DataCategoriesShowPage';
 import DataCategoriesNewPage from './pages/DataCategoriesNewPage';
+import DataSchemaPage from './pages/DataSchemaPage';
+import DataSchemaShowPage from './pages/DataSchemaShowPage';
+import DataSchemaNewPage from './pages/DataSchemaNewPage';
 
 // ----------------------------------------------------------------------
 
@@ -41,8 +43,13 @@ export default function Router() {
             {path: 'new', element: <UserNewPage/>},
           ]
         },
-        { path: 'products', element: <ProductsPage /> },
-        { path: 'schema', element: <SchemaPage /> },
+        { path: 'data_schema',
+          children: [
+            { path: 'index', element: <DataSchemaPage /> }, 
+            { path: 'show', element: <DataSchemaShowPage /> }, 
+            { path: 'new', element: <DataSchemaNewPage /> }, 
+          ],
+        },
         { path: 'data_sources',
           children: [
             { path: 'index', element: <DataSourcesPage /> }, 

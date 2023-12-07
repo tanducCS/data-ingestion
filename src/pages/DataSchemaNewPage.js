@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
@@ -11,23 +11,31 @@ import {
   CardHeader,
   CardContent,
   TextField,
+  MenuItem,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
 // RTK Query
-import { useAddDataCategoryMutation } from '../service';
+import { useAddSchemaMutation } from '../service';
 
 
 const initialForm = {
-    name: '',
-    topic: '',
-    description: '',    
+    schemaName: '',
+    type: 'PUBLIC',
+    schema: '',    
 }
 
-export default function DataCategoriesNewPage() {
+const type = [
+    {value: 'PUBLIC'},
+    {value: 'PRIVATE'},
+]
+
+export default function DataSchemaNewPage() {
   const navigate = useNavigate();
 
-  const [addDataCategory, addDataCategoryResult] = useAddDataCategoryMutation()
+  const [addSchema, addSchemaResult] = useAddSchemaMutation();
+
+  const [jsonError,setJsonError] = useState(null)
 
   const [formData, setFormData] = useState(initialForm);
  
@@ -36,40 +44,53 @@ export default function DataCategoriesNewPage() {
     setFormData({...formData, [id]: value})
   }
 
+  const handleChangeSchema = (e) => {
+    const inputSchema = e.target.value
+    try{
+        const jsonData = JSON.parse(inputSchema);
+        setFormData({...formData, schema: jsonData} )
+        setJsonError(null)
+    }
+    catch(err){
+        setJsonError('Chuỗi JSON không hợp lệ')
+    }
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     try{
-      await addDataCategory(formData).unwrap()
+      await addSchema(formData).unwrap()
     }
     catch(error){
       console.log(error)
     }
     setFormData(initialForm)
   }
+
   console.log(formData)
   return (
     <>
       <Helmet>
-        <title> Data Category </title>
+        <title> Data Schema </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Data Category
+            Data Schema
           </Typography>
         </Stack>
 
         <Card>
-          <CardHeader title="Thêm danh mục dữ liệu" />
+          <CardHeader title="Thêm lược đồ dữ liệu" />
           <CardContent>
             <form onSubmit={handleSubmit}>
                   <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
                     <TextField
                       required
-                      id="name"
-                      label="Tên danh mục"
+                      id="schemaName"
+                      label="Tên lược đồ"
                       fullWidth
                       autoComplete="name"
                       variant="standard"
@@ -78,26 +99,36 @@ export default function DataCategoriesNewPage() {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
+                      defaultValue='PUBLIC'
                       required
-                      id="topic"
-                      label="Chủ đề"
+                      select
+                      id="type"
+                      label="Loại truy cập"
                       fullWidth
-                      autoComplete="topic"
+                      autoComplete="type"
                       variant="standard"
-                      onChange={handleChangeInput}
-                    />
+                      onChange={(e) => setFormData({...formData, type: e.target.value})}
+                    >
+                        {type.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                            {option.value}
+                          </MenuItem>
+                        ))}
+                    </TextField>
                   </Grid>
                   <Grid item xs={12} md={12}>
                     <TextField
                       required
-                      id="description"
-                      label="Mô tả"
+                      id="schema"
+                      label="Lược đồ"
                       fullWidth
                       multiline
                       minRows={4}
                       autoComplete="description"
                       variant="standard"
-                      onChange={handleChangeInput}
+                      onChange={(e) => handleChangeSchema(e)}
+                      error= {Boolean(jsonError)}
+                      helperText={jsonError}
                     />
                   </Grid>
                   

@@ -22,6 +22,11 @@ const navConfig = [
     icon: icon('ic_data-source'),
   },
   {
+    title: 'Quản lý Lược đồ',
+    path: '/dashboard/data_schema/index',
+    icon: icon('ic_data_schema'),
+  },
+  {
     title: 'Quản lý Danh mục',
     path: '/dashboard/data_categories/index',
     icon: icon('ic_data_category'),
