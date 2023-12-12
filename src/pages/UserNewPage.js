@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardContent,
   TextField,
+  MenuItem,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
@@ -22,10 +23,17 @@ const initialForm = {
     name: '',
     username: '',
     password: '',
-    role: '',
+    role: 'DATA_OWNER',
     email: '',
     organization:'',
 }
+
+const role = [
+  {value: 'DATA_OWNER'},
+  {value: 'ADMIN'},
+  {value: 'GUEST'},
+]
+
 
 export default function UserNewPage() {
   const navigate = useNavigate();
@@ -43,13 +51,13 @@ export default function UserNewPage() {
     event.preventDefault()
     try{
       await addUser(formData).unwrap()
+      navigate('/dashboard/user/index', { replace: true });
     }
     catch(error){
       console.log(error)
     }
     setFormData(initialForm)
   }
-
   return (
     <>
       <Helmet>
@@ -117,14 +125,21 @@ export default function UserNewPage() {
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
-                      required
+                      defaultValue={role[0].value}
+                      select
                       id="role"
                       label="Vai trò"
                       fullWidth
                       autoComplete="role"
                       variant="standard"
-                      onChange={handleChangeInput}
-                    />
+                      onChange={(e) => setFormData({...formData, role: e.target.value})}
+                    >
+                      {role.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField

@@ -18,7 +18,6 @@ import {
   AppWidgetSummary,
   AppCurrentSubject,
   AppConversionRates,
-  AppFormInput,
 } from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------

@@ -1,42 +1,43 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
+import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox,FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
 // components
+
+import { useAuthLoginMutation } from '../../../service';
 import Iconify from '../../../components/iconify';
 
-const API_URL = 'http://localhost:3000/auth/login';
+
+const initialForm = {
+  username: '',
+  password: '',
+}
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
 
+  const [authLogin, authLoginResult] = useAuthLoginMutation()
+
   const [showPassword, setShowPassword] = useState(false);
-  const [userName,setUserName] = useState('');
-  const [password,setPassword] = useState('');
+  
+  const [formData, setFormData] = useState(initialForm);
 
-  const handleUserNameChange = (e) => {
-    setUserName(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
+  const handleChangeInput = (e) => {
+    const {name,value} = e.target
+    setFormData({...formData,[name]: value})
+  
+  }
   const handleClick = async () => {
     try{
-      const response = await axios.post(API_URL, {
-        username: userName,
-        password,
-      });
-
-      if (response.status === 200) {
-        const data = response.data;
+      const response = await authLogin(formData).unwrap()
+      
+      if (response) {
         // Lưu token vào local storage hoặc cookies để sử dụng cho các yêu cầu API sau này
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
         // Điều hướng người dùng đến trang dashboard
         navigate('/dashboard', { replace: true });
       } else {
@@ -54,10 +55,10 @@ export default function LoginForm() {
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="userName" label="username" onChange={(e) => handleUserNameChange(e)}/>
+        <TextField name="username" label="username" onChange={handleChangeInput}/>
 
         <TextField
-          onChange={(e) => handlePasswordChange(e)}
+          onChange={handleChangeInput}
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
@@ -74,7 +75,8 @@ export default function LoginForm() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Checkbox name="remember" label="Remember me" />
+        <FormControlLabel control={<Checkbox name="remember" label="Remember me" />} label="Remember me" />
+        
         <Link variant="subtitle2" underline="hover">
           Forgot password?
         </Link>

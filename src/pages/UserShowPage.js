@@ -14,6 +14,7 @@ import {
   CardContent,
   CircularProgress,
   TextField,
+  MenuItem,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { useDeleteUserMutation, useGetUsersByIdQuery, useUpdateUserMutation } from '../service';
@@ -24,6 +25,12 @@ const initialForm = {
   email: '',
   organization:'',
 }
+
+const role = [
+  {value: 'DATA_OWNER'},
+  {value: 'ADMIN'},
+  {value: 'GUEST'},
+]
 
 
 export default function UserShowPage() {
@@ -61,6 +68,7 @@ export default function UserShowPage() {
 
   const handleDeleteUser = async (id) => {
     await deleteUser(id)
+    navigate('/dashboard/user/index', { replace: true });
   }
 
   useEffect(() => {
@@ -116,14 +124,20 @@ export default function UserShowPage() {
                   <Grid item xs={12} md={6}>
                     <TextField
                       defaultValue={data?.role}
-                      required
+                      select
                       id="role"
                       label="Vai trò"
                       fullWidth
                       autoComplete="role"
                       variant="standard"
-                      onChange={handleChangeInput}
-                    />
+                      onChange={(e) => setFormData({...formData, role: e.target.value})}
+                    >
+                      {role.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextField
