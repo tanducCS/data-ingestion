@@ -202,7 +202,7 @@ export default function DataSourcesPage() {
                 <TableBody>
                   {
                     filteredDataSources ? filteredDataSources.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                      const { id, name, type, status, avatarUrl, description, createdAt, updatedAt } = row;
+                      const { id, name, type, avatarUrl, description, createdAt, updatedAt } = row;
                       const selectedUser = selected.indexOf(name) !== -1;
 
                     return (

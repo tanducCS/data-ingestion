@@ -111,6 +111,8 @@ export default function UserPage() {
     await deleteUser(userId)
   }
 
+
+
   const handleOpenMenu = (event, id) => {
     dispatch(startEditUser(id))
     setOpen(event.currentTarget);
@@ -206,7 +208,7 @@ export default function UserPage() {
                 <TableBody>
                   {
                     filteredUsers ? filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                      const { id, name, role, company, avatarUrl, email } = row;
+                      const { id, name, role, organization, avatarUrl, email } = row;
                       const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -226,7 +228,7 @@ export default function UserPage() {
 
                         <TableCell align="left">{email}</TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
+                        <TableCell align="left">{organization}</TableCell>
 
                         <TableCell align="left">{role}</TableCell>
 

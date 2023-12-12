@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
-import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
+import { Box, Link,  Drawer, Typography, Avatar } from '@mui/material';
 // mock
 import account from '../../../_mock/account';
 // hooks
@@ -15,6 +15,9 @@ import NavSection from '../../../components/nav-section';
 //
 import navConfig from './config';
 
+
+const temp = localStorage.getItem('user');
+const user = JSON.parse(temp)
 // ----------------------------------------------------------------------
 
 const NAV_WIDTH = 280;
@@ -64,11 +67,11 @@ export default function Nav({ openNav, onCloseNav }) {
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                Kiều Khánh Quân
+                {user.name}
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
+                {user.role}
               </Typography>
             </Box>
           </StyledAccount>

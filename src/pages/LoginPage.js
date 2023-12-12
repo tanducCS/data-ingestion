@@ -50,13 +50,13 @@ export default function LoginPage() {
       </Helmet>
 
       <StyledRoot>
-        <Logo
+        {/* <Logo
           sx={{
             position: 'fixed',
             top: { xs: 16, sm: 24, md: 40 },
             left: { xs: 16, sm: 24, md: 40 },
           }}
-        />
+        /> */}
 
         {mdUp && (
           <StyledSection>
@@ -70,7 +70,7 @@ export default function LoginPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Sign in to Nectere Project
+              Sign in to Nectere Data Ingestion Hub
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>
