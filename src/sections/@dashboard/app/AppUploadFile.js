@@ -1,6 +1,7 @@
 
 import * as React from 'react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -10,44 +11,57 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Button from '@mui/material/Button';
-import {Box} from '@mui/material';
 import axios from 'axios';
-import FileUpload from '../../../components/file-uploader/FileUpload'
+import FileUpload from '../../../components/file-uploader/FileUpload';
+import { useUploadDataMutation } from '../../../service';
+import {secrectKey} from "../../../service/base";
 
 const API_URL = 'http://hpcc.hcmut.edu.vn:23000/users';
+const initialForm = {
+  file: null
+}
 export default function AppUploadFile() {
+  const navigate = useNavigate();
+
   const [userName,setUserName] = useState('');
   const [password,setPassword] = useState('');
   const [name,setName] = useState('');
-  const [role,setRole] = useState('');
+  const [srcId,setSrcId] = useState('');
   const [organization,setOrganization] = useState('');
   const [email,setEmail] = useState('');
+  const [uploadData, addUserResult] = useUploadDataMutation()
 
-  const handleUserNameChange = (e) => {
-    setUserName(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleNameChange = (e) => {
-    setName(e.target.value);
-  };
-
-  const handleRoleChange = (e) => {
-    setRole(e.target.value);
+  const handleSourceChange = (e) => {
+    setSrcId(e.target.value);
   };
 
   const handleOrganizationChange = (e) => {
     setOrganization(e.target.value);
   };
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const [formData, setFormData] = useState(new FormData());
+  const [file,setFile]=useState([]);
+  const handleFileChange = (uploadedFile) => {
+    setFile(uploadedFile)
+    // setFormData({file: {uploadedFile});
+    const updatedFormData = new FormData();
+    updatedFormData.append('file', uploadedFile);
+    setFormData(updatedFormData);
   };
 
-  const [files, setFiles] = useState([]);
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    try{
+      await localStorage.setItem('secrectKey',srcId);
+      await uploadData(formData).unwrap()
+      navigate('/dashboard/user/index', { replace: true });
+    }
+    catch(error){
+      console.log(error)
+    }
+    // console.log(formData);
+    setFormData(initialForm)
+  }
   const handleClick = async () => {
     try{
       const response = await axios.post(API_URL, {
@@ -55,7 +69,7 @@ export default function AppUploadFile() {
         password,
         name, 
         email,
-        role,
+        srcId,
         organization,
       });
 
@@ -73,99 +87,41 @@ export default function AppUploadFile() {
   };
   return (
     <Card>
-      <CardHeader title="Thêm/Chỉnh sửa thông tin người dùng" />
+      <CardHeader title="Upload Dữ liệu" />
       <CardContent>
+      <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <TextField
             required
-            id="name"
-            label="Tên người dùng"
-            fullWidth
-            autoComplete="cc-name"
-            variant="standard"
-            onChange = {(e) => handleNameChange(e)}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            required
-            id="email"
-            label="Email"
-            fullWidth
-            autoComplete="cc-number"
-            variant="standard"
-            onChange = {(e) => handleEmailChange(e)}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            required
-            id="username"
-            label="Tên tài khoản"
-            fullWidth
-            autoComplete="cc-exp"
-            variant="standard"
-            onChange = {(e) => handleUserNameChange(e)}
-          />
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <TextField
-            required
-            id="password"
-            label="Mật khẩu"
-            helperText="Last three digits on signature strip"
-            fullWidth
-            autoComplete="cc-csc"
-            variant="standard"
-            onChange = {(e) => handlePasswordChange(e)}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            required
             id="role"
-            label="Vai trò"
+            label="Data Source Id"
             fullWidth
             autoComplete="cc-number"
             variant="standard"
-            onChange = {(e) => handleRoleChange(e)}
+            onChange = {(e) => handleSourceChange(e)}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
             required
             id="organization"
-            label="Tổ chức"
+            label="Loại Dữ Liệu"
             fullWidth
             autoComplete="cc-number"
             variant="standard"
             onChange = {(e) => handleOrganizationChange(e)}
           />
         </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={<Checkbox color="secondary" name="saveCard" value="yes" />}
-            label="Remember credit card details for next time"
-          />
-        </Grid>
         <Grid container justifyContent="left"  item xs={12} md={12} sx={{ alignItems: 'center' }}>
-          {/* <input type="file" />
-          <Button 
-          // type="submit"
-          variant="contained"
-          component="label" >
-            <input type="file" hidden />
-            Upload
-          </Button> */}
-          <FileUpload/>
+          <FileUpload onFileChange={handleFileChange}/>
         </Grid>
         <Grid container justifyContent="center"  item xs={12} sx={{ alignItems: 'center' }}>
           <Button type='submit'>Huỷ</Button>
-          <Button type='submit' >Tạo mới</Button>
+          <Button type='submit' >Upload</Button>
         </Grid>
       </Grid>
+      </form>
       </CardContent>
     </Card>
   );

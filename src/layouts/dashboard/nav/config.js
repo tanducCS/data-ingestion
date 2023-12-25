@@ -36,6 +36,11 @@ const navConfig = [
     path: '/dashboard/task/index',
     icon: icon('ic_task'),
   },
+  {
+    title: 'Nhập dữ liệu',
+    path: '/dashboard/usr',
+    icon: icon('ic_data-source'),
+  },
   // {
   //   title: 'Quản lý người dùng',
   //   path: '/dashboard/user',

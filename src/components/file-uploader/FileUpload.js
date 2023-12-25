@@ -23,7 +23,7 @@ import './drop-file-input.css';
 import { ImageConfig } from './ImageConfig'; 
 import uploadImg from '../../assets/cloud-upload-regular-240.png';
 
-const FileUpload = props => {
+const FileUpload = ({onFileChange}) => {
 
     const wrapperRef = useRef(null);
 
@@ -36,19 +36,20 @@ const FileUpload = props => {
     const onDrop = () => wrapperRef.current.classList.remove('dragover');
 
     const onFileDrop = (e) => {
-        const newFile = e.target.files[0];
-        if (newFile) {
-            const updatedList = [...fileList, newFile];
+        const file = e.target.files[0];
+        if (file) {
+            const updatedList = [...fileList, file];
             setFileList(updatedList);
-            props.onFileChange(updatedList);
+            onFileChange(updatedList);
         }
+        onFileChange(file);
     }
 
     const fileRemove = (file) => {
         const updatedList = [...fileList];
         updatedList.splice(fileList.indexOf(file), 1);
         setFileList(updatedList);
-        props.onFileChange(updatedList);
+        onFileChange(updatedList);
     }
 
     return (
@@ -77,7 +78,7 @@ const FileUpload = props => {
                                 <div key={index} className="drop-file-preview__item">
                                     <img src={ImageConfig[item.type.split('/')[1]] || ImageConfig.default} alt="" />
                                     <div className="drop-file-preview__item__info">
-                                        <p>{item.name}</p>x
+                                        <p>{item.name}</p>
                                         <p>{item.size}B</p>
                                     </div>
                                     <button className="drop-file-preview__item__del" onClick={() => fileRemove(item)}>x</button>
