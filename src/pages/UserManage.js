@@ -32,7 +32,7 @@ export default function UseManage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Quản Lý Người Dùng
+          Quản lí Upload Dữ liệu
         </Typography>
 
         <Grid container spacing={3}>
