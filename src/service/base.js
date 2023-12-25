@@ -44,7 +44,7 @@ const uploadQueryWithInterceptor = async (args, api, extraOptions) => {
 
 export const API = createApi({
     baseQuery: baseQueryWithInterceptor,
-    tagTypes:["Users","Tasks","DataCategories","DataSchema"],
+    tagTypes:["Users","Tasks","DataCategories","DataSchema","DataSources"],
     endpoints: () => ({}),
 })
 export const uploadAPI = createApi({

@@ -46,7 +46,7 @@ export default function DataCategoriesNewPage() {
     }
     setFormData(initialForm)
   }
-  console.log(formData)
+  
   return (
     <>
       <Helmet>

@@ -39,7 +39,7 @@ export default function LoginForm() {
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
         // Điều hướng người dùng đến trang dashboard
-        navigate('/dashboard', { replace: true });
+        navigate('/dashboard/app', { replace: true });
       } else {
         // Xử lý khi đăng nhập thất bại (hiển thị thông báo lỗi, vv)  
         console.error('Login failed');

@@ -172,7 +172,6 @@ export default function DataCategoriesPage() {
   const isNotFound = !filteredDataSources?.length && !!filterName;
 
  
-
   
   return (
     <>

@@ -23,6 +23,7 @@ import DataCategoriesNewPage from './pages/DataCategoriesNewPage';
 import DataSchemaPage from './pages/DataSchemaPage';
 import DataSchemaShowPage from './pages/DataSchemaShowPage';
 import DataSchemaNewPage from './pages/DataSchemaNewPage';
+import DataSourceNewPage from './pages/DataSourceNewPage';
 
 // ----------------------------------------------------------------------
 
@@ -54,6 +55,7 @@ export default function Router() {
           children: [
             { path: 'index', element: <DataSourcesPage /> }, 
             { path: 'show', element: <DataSourceShowPage /> }, 
+            { path: 'new', element: <DataSourceNewPage /> }, 
           ],
         },
         { path: 'data_categories',
