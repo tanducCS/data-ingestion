@@ -170,7 +170,7 @@ export default function DataSchemaPage() {
 
   const isNotFound = !filteredDataSources?.length && !!filterName;
 
-  console.log(data)
+  
   
   return (
     <>

@@ -5,6 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
+import { useGetAllDataCategoriesQuery, useGetAllDataSourcesQuery, useGetAllSchemaQuery, useGetAllTasksQuery, useGetAllUsersQuery } from '../service';
 // sections
 import {
   AppTasks,
@@ -22,6 +23,13 @@ import {
 
 export default function DashboardAppPage() {
   const theme = useTheme();
+  const { data: dataCategories } = useGetAllDataCategoriesQuery()
+  
+  const { data: dataSources } = useGetAllDataSourcesQuery()
+
+  const {data: users} = useGetAllUsersQuery()
+
+  const { data: tasks } = useGetAllTasksQuery()
 
   return (
     <>
@@ -36,19 +44,19 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Nguồn dữ liệu" total={714} icon={'ant-design:database-filled'} />
+            <AppWidgetSummary title="Nguồn dữ liệu" total={dataSources?.length} icon={'ant-design:database-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Đối tượng quản lý" total={10}  icon={'ant-design:user'} />
+            <AppWidgetSummary title="Đối tượng quản lý" total={users?.length}  icon={'ant-design:user'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Danh mục dữ liệu" total={15}  icon={'ant-design:tag-filled'} />
+            <AppWidgetSummary title="Danh mục dữ liệu" total={dataCategories?.length}  icon={'ant-design:tag-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Số lượng đăng ký" total={20}  icon={'ant-design:file-filled'} />
+            <AppWidgetSummary title="Số lượng đăng ký" total={tasks?.length}  icon={'ant-design:file-filled'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>

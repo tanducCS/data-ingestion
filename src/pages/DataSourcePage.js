@@ -84,9 +84,9 @@ function applySortFilter(array, comparator, query) {
 
 export default function DataSourcesPage() {
   const navigate = useNavigate();
-
-  const { data, error, isLoading, isFetching } = useGetAllDataSourcesQuery()
   
+  const { data, error, isLoading, isFetching } = useGetAllDataSourcesQuery()
+  console.log(data)
 
   const dispatch = useDispatch()
 
@@ -179,7 +179,7 @@ export default function DataSourcesPage() {
           <Typography variant="h4" gutterBottom>
             Data Sources
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => navigate('/dashboard/user/new')}>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => navigate('/dashboard/data_sources/new')}>
             New Data Sources
           </Button>
         </Stack>
